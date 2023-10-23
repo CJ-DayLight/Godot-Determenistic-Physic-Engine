@@ -36,8 +36,11 @@ Forward Became W button
 BackWard Becam S button
 
 Coming Soon....
+
 Wall Run
+
 X Axsis Head Movement
+
 Automatic Optimization to collsion checks
 
 
