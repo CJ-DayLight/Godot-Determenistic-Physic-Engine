@@ -1,0 +1,125 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Physic/PhysicCubic/Wall.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Maps/PlayGround/Environment.tres" type="Environment" id=3]
+[ext_resource path="res://Maps/PlayGround/PlayGround.gd" type="Script" id=4]
+[ext_resource path="res://Player/Player.tscn" type="PackedScene" id=6]
+
+[node name="L_Main" type="Spatial"]
+script = ExtResource( 4 )
+
+[node name="Lighting" type="Node" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting"]
+environment = ExtResource( 3 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="Lighting"]
+transform = Transform( -0.866026, -0.433012, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 110, -219 )
+light_color = Color( 0.972549, 0.933333, 0.87451, 1 )
+light_energy = 2.0
+shadow_bias = 0.05
+directional_shadow_mode = 0
+directional_shadow_split_1 = 0.01
+directional_shadow_split_2 = 0.001
+directional_shadow_split_3 = 0.07
+directional_shadow_normal_bias = 2.0
+directional_shadow_bias_split_scale = 0.0
+directional_shadow_max_distance = 879.0
+
+[node name="Wall1" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1077, 70, 499 )
+Height = 4
+Depth = 35
+Width = 113
+
+[node name="Wall2" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 838, 60, 499 )
+Height = 4
+Depth = 35
+Width = 113
+
+[node name="Wall3" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 838, 49, 601 )
+Height = 20
+Depth = 113
+Width = 35
+
+[node name="Wall4" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1153, 50, 601 )
+Height = 4
+Depth = 113
+Width = 35
+
+[node name="Wall5" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 968, 3, 622 )
+Height = 34
+Depth = 71
+Width = 71
+
+[node name="V2" parent="Wall5" index="1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 71, 0, 0 )
+
+[node name="V3" parent="Wall5" index="2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 71 )
+
+[node name="V4" parent="Wall5" index="3"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 71, 0, 71 )
+
+[node name="CSGPolygon" parent="Wall5" index="4"]
+polygon = PoolVector2Array( 0, 0, 71, 0, 71, 34, 0, 34 )
+depth = 71.0
+
+[node name="Wall6" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 838, 29, 777 )
+Depth = 35
+Width = 352
+
+[node name="Wall7" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 838, 29, 812 )
+Depth = 35
+Width = 32
+
+[node name="Wall8" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1158, 29, 812 )
+Depth = 35
+Width = 32
+
+[node name="Wall9" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 834, -3, 849 )
+Height = 109
+Depth = 10
+Width = 355
+
+[node name="Wall10" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 834, -3, 489 )
+Height = 109
+Depth = 10
+Width = 355
+
+[node name="Wall11" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 824, -3, 489 )
+Height = 109
+Depth = 370
+Width = 10
+
+[node name="Wall12" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1189, -3, 489 )
+Height = 109
+Depth = 370
+Width = 10
+
+[node name="Wall13" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 765, 2, 434 )
+Depth = 500
+Width = 500
+
+[node name="ServerPlayer" parent="." instance=ExtResource( 6 )]
+transform = Transform( 9, 0, 0, 0, 9, 0, 0, 0, 9, 932, 53, 653 )
+
+[node name="ClientPlayer" parent="." instance=ExtResource( 6 )]
+transform = Transform( 9, 0, 0, 0, 9, 0, 0, 0, 9, 1078, 37, 658 )
+script = null
+
+[node name="RoundedStep" type="MeshInstance" parent="."]
+
+[editable path="Wall5"]

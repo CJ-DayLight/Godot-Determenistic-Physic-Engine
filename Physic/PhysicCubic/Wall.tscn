@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Physic/PhysicCubic/Wall.gd" type="Script" id=1]
+[ext_resource path="res://Maps/PlayGround/Materials/M_Dark.tres" type="Material" id=2]
+
+[node name="Wall" type="Spatial" groups=["StaticCollsions"]]
+script = ExtResource( 1 )
+Height = 5
+Depth = 5
+Width = 5
+
+[node name="V1" type="Position3D" parent="."]
+
+[node name="V2" type="Position3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 0 )
+
+[node name="V3" type="Position3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5 )
+
+[node name="V4" type="Position3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, 5 )
+
+[node name="CSGPolygon" type="CSGPolygon" parent="."]
+transform = Transform( -4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0 )
+material_override = ExtResource( 2 )
+polygon = PoolVector2Array( 0, 0, 5, 0, 5, 5, 0, 5 )
+depth = 5.0
