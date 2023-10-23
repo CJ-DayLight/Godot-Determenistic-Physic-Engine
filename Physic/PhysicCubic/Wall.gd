@@ -11,6 +11,7 @@ var V1 :Vector3 = Vector3(1,1,1)
 var V2 :Vector3 = Vector3(1,1,1)
 var V3 :Vector3 = Vector3(1,1,1)
 var V4 :Vector3 = Vector3(1,1,1)
+var HV :Vector3 = Vector3(0,0,1)
 
 
 
@@ -47,6 +48,7 @@ func _physics_process(delta):
 	V2 = global_translation + Vector3(Width,0,0)
 	V3 = global_translation + Vector3(0,0,Depth)
 	V4 = global_translation + Vector3(Width,0,Depth)
+	HV = global_translation + Vector3(0,Height,0)
 	
 	$V1.global_translation = V1
 	$V2.global_translation = V2

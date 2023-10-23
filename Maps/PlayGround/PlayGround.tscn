@@ -39,8 +39,8 @@ Depth = 35
 Width = 113
 
 [node name="Wall3" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 838, 49, 601 )
-Height = 20
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 838, 32, 601 )
+Height = 30
 Depth = 113
 Width = 35
 
@@ -51,23 +51,10 @@ Depth = 113
 Width = 35
 
 [node name="Wall5" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 968, 3, 622 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 968, 0, 622 )
 Height = 34
 Depth = 71
 Width = 71
-
-[node name="V2" parent="Wall5" index="1"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 71, 0, 0 )
-
-[node name="V3" parent="Wall5" index="2"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 71 )
-
-[node name="V4" parent="Wall5" index="3"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 71, 0, 71 )
-
-[node name="CSGPolygon" parent="Wall5" index="4"]
-polygon = PoolVector2Array( 0, 0, 71, 0, 71, 34, 0, 34 )
-depth = 71.0
 
 [node name="Wall6" parent="." instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 838, 29, 777 )
@@ -85,25 +72,25 @@ Depth = 35
 Width = 32
 
 [node name="Wall9" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 834, -3, 849 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 834, 0, 849 )
 Height = 109
 Depth = 10
 Width = 355
 
 [node name="Wall10" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 834, -3, 489 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 834, 0, 489 )
 Height = 109
 Depth = 10
 Width = 355
 
 [node name="Wall11" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 824, -3, 489 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 824, 0, 489 )
 Height = 109
 Depth = 370
 Width = 10
 
 [node name="Wall12" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1189, -3, 489 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1189, 0, 489 )
 Height = 109
 Depth = 370
 Width = 10
@@ -121,5 +108,3 @@ transform = Transform( 9, 0, 0, 0, 9, 0, 0, 0, 9, 1078, 37, 658 )
 script = null
 
 [node name="RoundedStep" type="MeshInstance" parent="."]
-
-[editable path="Wall5"]

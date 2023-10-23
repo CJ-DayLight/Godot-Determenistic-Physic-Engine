@@ -18,5 +18,7 @@ transform = Transform( 0.1, 0, 0, 0, -4.37114e-08, 0.1, 0, -1, -4.37114e-09, 0, 
 mesh = SubResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( -1, 2.62583e-21, -8.74228e-08, 1.69407e-21, 1, 1.06581e-14, 8.74228e-08, 1.06581e-14, -1, 0, 3, -3.745 )
+transform = Transform( -1, 2.62583e-21, -8.74228e-08, 1.69407e-21, 1, 1.06581e-14, 8.74228e-08, 1.06581e-14, -1, 0, 2.41481, 0.123448 )
 far = 8192.0
+
+[node name="Spatial" type="Spatial" parent="."]
