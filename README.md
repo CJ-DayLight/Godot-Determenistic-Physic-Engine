@@ -25,7 +25,10 @@ it have to make 80 Collsion Check to every object this is means if you have 10 o
 800 object per physic frame.
 if you have 30 physic frame it makes 30x800 check per second it is not much for modern cpu
 
-
+*
+*
+*
+**************************
 Version 0.9 Changes
 
 Wall Run added
@@ -34,10 +37,10 @@ Wall Jump Gives Better jumping Feeling
 
 Some Bugs Closed
 
-
-
-
-
+***********************************
+*
+*
+***********************************
 Version 0.8 Changes
 
 Added Left Right Backwards Walking.
@@ -55,10 +58,11 @@ Right Became D button
 Forward Became W button
 
 BackWard Becam S button
-
-
-
-
+**************************
+*
+*
+*
+*
 Coming Soon....
 
 Wall Run
