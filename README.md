@@ -65,7 +65,15 @@ BackWard Becam S button
 *
 Coming Soon....
 
-Wall Run
+Acceleration
+
+Deccealration
+
+Air Control
+
+Sliding
+
+Crouching
 
 X Axsis Head Movement
 
