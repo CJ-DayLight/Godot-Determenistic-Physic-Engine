@@ -27,24 +27,44 @@ if you have 30 physic frame it makes 30x800 check per second it is not much for 
 
 
 Version 0.9 Changes
+
 Wall Run added
+
 Wall Jump Gives Better jumping Feeling
+
 Some Bugs Closed
 
 
+
+
+
 Version 0.8 Changes
+
 Added Left Right Backwards Walking.
+
 Player Get Fps view.
+
 Mouse Controlled Y axsis.
+
 Wall Jump Using Q button Using RayCasting Method (Fast RayCast)
+
 Left Became A button
+
 Right Became D button
+
 Forward Became W button
+
 BackWard Becam S button
 
+
+
+
 Coming Soon....
+
 Wall Run
+
 X Axsis Head Movement
+
 Automatic Optimization to collsion checks
 
 
