@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Physic/PhysicCubic/Wall.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Maps/PlayGround/Label.gd" type="Script" id=2]
 [ext_resource path="res://Maps/PlayGround/Environment.tres" type="Environment" id=3]
 [ext_resource path="res://Maps/PlayGround/PlayGround.gd" type="Script" id=4]
 [ext_resource path="res://Player/Player.tscn" type="PackedScene" id=6]
@@ -84,10 +85,16 @@ Depth = 10
 Width = 355
 
 [node name="Wall11" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 824, 0, 489 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 674, 0, 621 )
 Height = 109
-Depth = 370
-Width = 10
+Depth = 10
+Width = 121
+
+[node name="Wall25" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 534, 0, 697 )
+Height = 109
+Depth = 10
+Width = 121
 
 [node name="Wall12" parent="." instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1189, 0, 489 )
@@ -100,6 +107,74 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 765, 2, 434 )
 Depth = 500
 Width = 500
 
+[node name="Wall14" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 365, 70, 499 )
+Height = 4
+Depth = 35
+Width = 113
+
+[node name="Wall15" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 60, 499 )
+Height = 4
+Depth = 35
+Width = 113
+
+[node name="Wall16" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 32, 601 )
+Height = 30
+Depth = 113
+Width = 35
+
+[node name="Wall17" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 441, 50, 601 )
+Height = 4
+Depth = 113
+Width = 35
+
+[node name="Wall18" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 256, 0, 622 )
+Height = 34
+Depth = 71
+Width = 71
+
+[node name="Wall19" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 29, 777 )
+Depth = 35
+Width = 352
+
+[node name="Wall20" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 29, 812 )
+Depth = 35
+Width = 32
+
+[node name="Wall21" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 446, 29, 812 )
+Depth = 35
+Width = 32
+
+[node name="Wall22" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 122, 0, 849 )
+Height = 109
+Depth = 10
+Width = 355
+
+[node name="Wall23" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 122, 0, 489 )
+Height = 109
+Depth = 10
+Width = 355
+
+[node name="Wall24" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 112, 0, 489 )
+Height = 109
+Depth = 370
+Width = 10
+
+[node name="Wall26" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 2, 434 )
+Depth = 500
+Width = 500
+
 [node name="ServerPlayer" parent="." instance=ExtResource( 6 )]
 transform = Transform( 9, 0, 0, 0, 9, 0, 0, 0, 9, 932, 53, 653 )
 
@@ -108,3 +183,10 @@ transform = Transform( 9, 0, 0, 0, 9, 0, 0, 0, 9, 1078, 37, 658 )
 script = null
 
 [node name="RoundedStep" type="MeshInstance" parent="."]
+
+[node name="Label" type="Label" parent="."]
+margin_left = 17.0
+margin_top = 18.0
+margin_right = 191.0
+margin_bottom = 79.0
+script = ExtResource( 2 )

@@ -21,20 +21,31 @@ var OnFollor = false
 var OnWall = false
 var CurrentWallY
 var Fall:int = int(0)
+
+
+
 var FallVelocity:int = 0
 var Jumping = false
 
 var TurnAroundLeftPressed = false
 var TurnRateLeft = 0
 var CanTurn = false
+var MovementNotLocked = true
+
 
 var FarToPlane:bool = false
 var CountedWallClasicalRayCast = 0
 
 var NoMove = false
 
+var Velocity = Vector3.ZERO
+var LastPosition = Vector3.ZERO
+var VeloctiyCounter = 0
 
-
+var WallRuning = false
+var CanWallRun = true
+var WallRunTimeStep = 0
+var WallBoost = Vector3.ZERO
 
 #Offline Thinks
 func _input(event):
@@ -62,7 +73,7 @@ func _get_local_input() -> Dictionary:
 		input["L"] = Input.is_action_pressed("ui_left")
 		input["R"] = Input.is_action_pressed("ui_right")
 	input["RY"] = RY
-	if Input.is_action_pressed("Jump"):
+	if Input.is_action_just_pressed("Jump"):
 		input["Jump"] = int(1)
 	if Input.is_action_just_pressed("TurnAroundLeft"):
 		input["TurnAroundLeft"] = true
@@ -71,12 +82,15 @@ func _get_local_input() -> Dictionary:
 func _network_process(input: Dictionary) -> void:
 	TrunMovement(input.get("TurnAroundLeft",false))
 	CalculateForwardVector(input.get("RY",0),input.get("F",false),input.get("B",false),input.get("L",false),input.get("R",false))
+	WallRun()
 	RayCasting((global_translation * 10) + Vector3(-FVector.x,0,-FVector.z),0)
 	RayCastY((global_translation * 10) + Vector3(-FVector.x,0,-FVector.z),0)
 	OneShotRayCast() # The Reson This Name it works PhysicFrames per second and it is lower than other raycast
+	WallRunCoolDown()
 #	IsOnFloor()
 	Jump(input.get("Jump",0))
 	MakeMovement()
+	CalculateVelocity()
 
 func _save_state() -> Dictionary:
 	return {
@@ -92,40 +106,38 @@ func _load_state(state: Dictionary) -> void:
 
 
 func CalculateForwardVector(Rotate,F,B,L,R):
-	var LR = 0
 # warning-ignore:narrowing_conversion
 	RoundedRotation = round(rotation_degrees.y)
 	rotate_y(deg2rad(int((Rotate * 3))))
-	
 	if L == true and F == true:
-		RoundedRotation += 45
-		if RoundedRotation >= 180:
-			var X = RoundedRotation + -180
-			RoundedRotation = (180 - X) * -1
-	
+			RoundedRotation += 45
+			if RoundedRotation >= 180:
+				var X = RoundedRotation + -180
+				RoundedRotation = (180 - X) * -1
+		
 	if L == true and F == false and B == false:
-		RoundedRotation += 90
-		if RoundedRotation >= 180:
-			var X = RoundedRotation + -180
-			RoundedRotation = (180 - X) * -1
+			RoundedRotation += 90
+			if RoundedRotation >= 180:
+				var X = RoundedRotation + -180
+				RoundedRotation = (180 - X) * -1
 
 	if L == true and B == true:
-		RoundedRotation += -45
-		if RoundedRotation <= -180:
-			var X = RoundedRotation + 180
-			RoundedRotation = (180 + X)
+			RoundedRotation += -45
+			if RoundedRotation <= -180:
+				var X = RoundedRotation + 180
+				RoundedRotation = (180 + X)
 
 	if R == true and F == true:
-		RoundedRotation += -45
-		if RoundedRotation <= -180:
-			var X = RoundedRotation + 180
-			RoundedRotation = (180 + X)
+			RoundedRotation += -45
+			if RoundedRotation <= -180:
+				var X = RoundedRotation + 180
+				RoundedRotation = (180 + X)
 
 	if R == true and F == false and B == false:
-		RoundedRotation += -90
-		if RoundedRotation <= -180:
-			var X = RoundedRotation + 180
-			RoundedRotation = (180 + X)
+			RoundedRotation += -90
+			if RoundedRotation <= -180:
+				var X = RoundedRotation + 180
+				RoundedRotation = (180 + X)
 
 	if R == true and B == true:
 		RoundedRotation += 45
@@ -167,6 +179,7 @@ func CalculateForwardVector(Rotate,F,B,L,R):
 	if F == true or L == true or R == true:
 		if B == false:
 			FVector = Vector3(stepify(FVector.x, 10),(-Fall * 10),stepify(FVector.z, 10)) / 10
+
 	if B == true:
 		FVector = Vector3(stepify(-FVector.x, 10),(-Fall * 10),stepify(-FVector.z, 10)) / 10
 	
@@ -179,6 +192,11 @@ func Jump(Pressed):
 		Fall += 1
 		if Fall >= 5:
 			Fall = 5
+			if Pressed > 0:
+				if WallRuning == true:
+					FVector = (WallNormal * 9)
+					Fall = -7
+					CanWallRun = false
 	else:
 		Fall = 0
 		if Pressed > 0:
@@ -188,7 +206,6 @@ func Jump(Pressed):
 
 
 func RayCasting(RayStep,StepSize):
-	WallNormal = Vector3.ZERO
 	CountedWalls = 0
 	Colided = false
 	RayStep = RayStep + FVector
@@ -305,23 +322,75 @@ func MakeMovement():
 
 func TrunMovement(Pressed):
 	if OnWall:
-		if Fall < 1:
+		if Fall < 2:
 			CanTurn = true
 	else:
 		CanTurn = false
-	if Pressed and CanTurn and FarToPlane:
+	if Pressed and CanTurn and FarToPlane and MovementNotLocked:
 		TurnAroundLeftPressed = true
 		TurnRateLeft = 0
 	if TurnAroundLeftPressed:
-		Fall = 0
-		TurnRateLeft += 15
-		rotate_y(deg2rad(int(15)))
+		WallBoost = Vector3.ZERO
+		TurnRateLeft += 60
+		MovementNotLocked = false
+		rotate_y(deg2rad(int(60)))
+		CanWallRun = false
 		if TurnRateLeft == 180:
+			Fall = -5
+			MovementNotLocked = true
 			CanTurn = false
 			TurnAroundLeftPressed = false
-			Fall = -7
-			FVector = (WallNormal * 9)
 
+func WallRun():
+	WallRuning = false
+	var RoundedRotationWR = round(rotation_degrees.y)
+	if OnWall and FarToPlane and CanWallRun:
+		if WallNormal.x != 0:
+			
+			if WallNormal.x == 1:
+				if RoundedRotationWR >= -50 and RoundedRotationWR <= 180 or RoundedRotationWR <= -130:
+					if RoundedRotationWR >= -50 and RoundedRotationWR < 90:
+						FVector = Vector3(-2,0,5)
+						WallBoost = Vector3(0,0,5)
+						WallRuning = true
+					
+					if RoundedRotationWR >= 90 and RoundedRotationWR <= 180 or RoundedRotationWR <= -130:
+						FVector = Vector3(-2,0,-5)
+						WallBoost = Vector3(0,0,-5)
+						WallRuning = true
+			if WallNormal.x == -1:
+				
+				if RoundedRotationWR <= -0 or RoundedRotationWR <= 30 and RoundedRotationWR >= -180 or RoundedRotationWR >= 140:
+					if RoundedRotationWR >= 140 or RoundedRotationWR >= -180 and RoundedRotationWR <= -90:
+						FVector = Vector3(2,0,-5)
+						WallBoost = Vector3(0,0,-5)
+						WallRuning = true
+					
+					if RoundedRotationWR <= 40 and RoundedRotationWR > -90:
+						FVector = Vector3(2,0,9)
+						WallBoost = Vector3(0,0,5)
+						WallRuning = true
+
+		if WallNormal.z != 0:
+			if WallNormal.z == -1:
+				if RoundedRotationWR >= 40:
+					FVector = Vector3(9,0,2)
+					WallBoost = Vector3(5,0,0)
+					WallRuning = true
+				if RoundedRotationWR <= -40:
+					FVector = Vector3(-9,0,2)
+					WallBoost = Vector3(-5,0,0)
+					WallRuning = true
+			if WallNormal.z == 1:
+				if RoundedRotationWR <= 140 and RoundedRotationWR >= -140:
+					if RoundedRotationWR <= 140 and RoundedRotationWR >= 0:
+						FVector = Vector3(9,0,-2)
+						WallBoost = Vector3(5,0,0)
+						WallRuning = true
+					if RoundedRotationWR >= -140 and RoundedRotationWR < 0:
+						FVector = Vector3(-9,0,-2)
+						WallBoost = Vector3(-5,0,0)
+						WallRuning = true
 
 func OneShotRayCast():
 	CountedWallClasicalRayCast = 0
@@ -349,10 +418,27 @@ func OneShotRayCast():
 					FarToPlane = false
 
 
+func CalculateVelocity():
+	if ColidedY == true:
+		if VeloctiyCounter == 1:
+			Velocity = global_translation - LastPosition
+			VeloctiyCounter = 0
+		else:
+			LastPosition = global_translation
+			VeloctiyCounter += 1
 
 
-
-
+func WallRunCoolDown():
+	if CanWallRun == false:
+		if WallRunTimeStep >= 10:
+			CanWallRun = true
+			WallRunTimeStep = 0
+		else:
+			WallRunTimeStep += 1
+			if ColidedY == false:
+				FVector = (WallNormal * 4) + WallBoost
+				FVector.y = -Fall
+	
 
 
 
