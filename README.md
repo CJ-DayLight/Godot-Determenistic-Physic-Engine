@@ -8,8 +8,8 @@ But this project using Rollback netcode addon made by mr.snopek.,
 Rollback addon is under MIT Lisence.
 and it using multiplay addon for runing 2 game same time.
 
-Also You can us my physic engine in anythink you want but you cant resell.
-You dont have to credit me if you do that I will be happy.
+Also You can use my physic engine in anythink you want but you cant resell.
+You dont have to credit me. but if you do that I will be happy.
 
 I will update code for my own game.
 for example wall runing and and wall jumping if it is wont suit you. you can delete these functions
