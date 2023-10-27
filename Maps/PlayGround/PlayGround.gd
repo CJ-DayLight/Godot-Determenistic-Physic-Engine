@@ -1,5 +1,6 @@
 extends Spatial
 
+
 #-----------------SCENE--SCRIPT------------------#
 #    Close your game faster by clicking 'Esc'    #
 #   Change mouse mode by clicking 'Shift + F1'   #
@@ -10,7 +11,9 @@ export var fast_close := true
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-
+	for Child in $Walls.get_children():
+		Child.global_translation *= 10
+		
 	
 	if !OS.is_debug_build():
 		fast_close = false

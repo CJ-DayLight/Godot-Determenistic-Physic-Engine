@@ -2,9 +2,13 @@ tool
 extends Spatial
 
 
-export var Height :int = 2
-export var Depth :int = 2
-export var Width :int = 2
+export var EXHeight :int = 2
+export var EXDepth :int = 2
+export var EXWidth :int = 2
+
+var Height :int = 0
+var Depth :int = 0
+var Width :int = 0
 
 
 var V1 :Vector3 = Vector3(1,1,1)
@@ -21,13 +25,20 @@ var PWV3 :Vector3 = Vector3.ZERO
 var PWV4 :Vector3 = Vector3.ZERO
 var PWHV :Vector3 = Vector3.ZERO
 
+var ParalelScaleLocal = 1
 
 
-#func _ready():
+
+func _ready():
+	ParalelScaleLocal = 10
+#	Depth = (EXDepth * 10)
+#	Height = (EXHeight * 10)
+#	Width = (EXWidth * 10)
 #	V1 = global_translation
 #	V2 = global_translation + Vector3(Width,0,0)
 #	V3 = global_translation + Vector3(0,0,Depth)
 #	V4 = global_translation + Vector3(Width,0,Depth)
+#	HV = global_translation + Vector3(0,Height,0)
 #
 #	$V1.global_translation = V1
 #	$V2.global_translation = V2
@@ -44,6 +55,9 @@ var PWHV :Vector3 = Vector3.ZERO
 
 
 func _physics_process(delta):
+	Depth = (EXDepth * ParalelScaleLocal)
+	Height = (EXHeight * ParalelScaleLocal)
+	Width = (EXWidth * ParalelScaleLocal)
 	V1 = global_translation
 	V2 = global_translation + Vector3(Width,0,0)
 	V3 = global_translation + Vector3(0,0,Depth)

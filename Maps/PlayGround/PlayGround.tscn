@@ -27,161 +27,6 @@ directional_shadow_normal_bias = 2.0
 directional_shadow_bias_split_scale = 0.0
 directional_shadow_max_distance = 879.0
 
-[node name="Wall1" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1077, 70, 499 )
-Height = 4
-Depth = 35
-Width = 113
-
-[node name="Wall2" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 838, 60, 499 )
-Height = 4
-Depth = 35
-Width = 113
-
-[node name="Wall3" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 838, 32, 601 )
-Height = 30
-Depth = 113
-Width = 35
-
-[node name="Wall4" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1153, 50, 601 )
-Height = 4
-Depth = 113
-Width = 35
-
-[node name="Wall5" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 968, 0, 622 )
-Height = 34
-Depth = 71
-Width = 71
-
-[node name="Wall6" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 838, 29, 777 )
-Depth = 35
-Width = 352
-
-[node name="Wall7" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 838, 29, 812 )
-Depth = 35
-Width = 32
-
-[node name="Wall8" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1158, 29, 812 )
-Depth = 35
-Width = 32
-
-[node name="Wall9" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 834, 0, 849 )
-Height = 109
-Depth = 10
-Width = 355
-
-[node name="Wall10" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 834, 0, 489 )
-Height = 109
-Depth = 10
-Width = 355
-
-[node name="Wall11" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 674, 0, 621 )
-Height = 109
-Depth = 10
-Width = 121
-
-[node name="Wall25" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 534, 0, 697 )
-Height = 109
-Depth = 10
-Width = 121
-
-[node name="Wall12" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1189, 0, 489 )
-Height = 109
-Depth = 370
-Width = 10
-
-[node name="Wall13" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 765, 2, 434 )
-Depth = 500
-Width = 500
-
-[node name="Wall14" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 365, 70, 499 )
-Height = 4
-Depth = 35
-Width = 113
-
-[node name="Wall15" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 60, 499 )
-Height = 4
-Depth = 35
-Width = 113
-
-[node name="Wall16" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 32, 601 )
-Height = 30
-Depth = 113
-Width = 35
-
-[node name="Wall17" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 441, 50, 601 )
-Height = 4
-Depth = 113
-Width = 35
-
-[node name="Wall18" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 256, 0, 622 )
-Height = 34
-Depth = 71
-Width = 71
-
-[node name="Wall19" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 29, 777 )
-Depth = 35
-Width = 352
-
-[node name="Wall20" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 126, 29, 812 )
-Depth = 35
-Width = 32
-
-[node name="Wall21" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 446, 29, 812 )
-Depth = 35
-Width = 32
-
-[node name="Wall22" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 122, 0, 849 )
-Height = 109
-Depth = 10
-Width = 355
-
-[node name="Wall23" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 122, 0, 489 )
-Height = 109
-Depth = 10
-Width = 355
-
-[node name="Wall24" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 112, 0, 489 )
-Height = 109
-Depth = 370
-Width = 10
-
-[node name="Wall26" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 53, 2, 434 )
-Depth = 500
-Width = 500
-
-[node name="ServerPlayer" parent="." instance=ExtResource( 6 )]
-transform = Transform( 9, 0, 0, 0, 9, 0, 0, 0, 9, 932, 53, 653 )
-
-[node name="ClientPlayer" parent="." instance=ExtResource( 6 )]
-transform = Transform( 9, 0, 0, 0, 9, 0, 0, 0, 9, 1078, 37, 658 )
-script = null
-
 [node name="RoundedStep" type="MeshInstance" parent="."]
 
 [node name="Label" type="Label" parent="."]
@@ -190,3 +35,38 @@ margin_top = 18.0
 margin_right = 191.0
 margin_bottom = 79.0
 script = ExtResource( 2 )
+
+[node name="ServerPlayer" parent="." instance=ExtResource( 6 )]
+transform = Transform( 9, 0, 0, 0, 9, 0, 0, 0, 9, 595, 62, 705 )
+
+[node name="ClientPlayer" parent="." instance=ExtResource( 6 )]
+transform = Transform( 9, 0, 0, 0, 9, 0, 0, 0, 9, 844, 57, 669 )
+script = null
+
+[node name="Walls" type="Spatial" parent="."]
+
+[node name="Wall1" parent="Walls" instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 900, 32, 600 )
+EXHeight = 200
+EXDepth = 500
+
+[node name="Wall2" parent="Walls" instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 500, 32, 600 )
+EXHeight = 200
+EXDepth = 500
+EXWidth = 1
+
+[node name="Wall3" parent="Walls" instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 500, 32, 600 )
+EXHeight = 200
+EXWidth = 400
+
+[node name="Wall4" parent="Walls" instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 500, 32, 1098 )
+EXHeight = 200
+EXWidth = 400
+
+[node name="Wall5" parent="Walls" instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 500, 30, 600 )
+EXDepth = 500
+EXWidth = 400
