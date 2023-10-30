@@ -1,11 +1,7 @@
 extends "res://Player/DetermenisticLib.gd"
 
 #ForwardVector
-var FVectorX :int = 0
-var FVectorZ :int = 0
 var FVector:Vector3 = Vector3()
-var RotationCalculated:int = 0
-var RoundedRotation:int = 0
 #ForwardVector
 
 #Mouse
@@ -28,6 +24,7 @@ var OnWall = false
 var CurrentSpeed:int = 0
 var Acceleration:int = 1
 var Deceleration:int = 1
+var SlideFrction:int = 1
 #Accel
 
 #WallRun/WallJump/WallTurn
@@ -47,8 +44,12 @@ var TurnAroundLeftPressed:bool = false
 var TurnRateLeft:int = 0
 #WallTrun
 
+#WallRun
 var CanWallRun:bool = true
 var WallRuning:bool = false
+# WallRun
+
+var SlideTimer:int = 10
 
 
 #Offline Thinks
@@ -83,14 +84,15 @@ func _get_local_input() -> Dictionary:
 		input["Jump"] = int(1)
 	if Input.is_action_just_pressed("TurnAroundLeft"):
 		input["TurnAroundLeft"] = true
-	if Input.is_action_pressed("Run"):
-		input["Sprint"] = true
+	if Input.is_action_pressed("Slide"):
+		input["Slide"] = true
 	return input
 
 func _network_process(input: Dictionary) -> void:
-	CalculateForwardVector(input.get("RY",0),input.get("F",false),input.get("B",false),input.get("L",false),input.get("R",false))
+	CalculateForwardVector(input.get("RY",0),input.get("F",false),input.get("B",false),input.get("L",false),input.get("R",false),input.get("Slide",false))
 	RayCasting((global_translation * 10),0)
 	RayCastY((global_translation * 10) + Vector3(-FVector.x,0,-FVector.z),0)
+	Slide(input.get("Slide",false))
 	WallRun()
 	Jump(input.get("Jump",0))
 	TrunMovement(input.get("TurnAroundLeft",false))
@@ -108,6 +110,8 @@ func _save_state() -> Dictionary:
 		TurnAroundLeftPressed = TurnAroundLeftPressed,
 		FVector = FVector,
 		CanWallRun = CanWallRun,
+		SlideTimer = SlideTimer,
+		SlideFrction = SlideFrction,
 	}
 
 func _load_state(state: Dictionary) -> void:
@@ -119,6 +123,8 @@ func _load_state(state: Dictionary) -> void:
 	TurnAroundLeftPressed = state['TurnAroundLeftPressed']
 	FVector = state['FVector']
 	CanWallRun = state['CanWallRun']
+	SlideTimer = state['SlideTimer']
+	SlideFrction = state['SlideFrction']
 	
 #Rollback
 
@@ -126,98 +132,111 @@ func _load_state(state: Dictionary) -> void:
 
 
 
-func CalculateForwardVector(Rotate,F:bool,B:bool,L:bool,R:bool) -> void:
+func CalculateForwardVector(Rotate,F:bool,B:bool,L:bool,R:bool,Slide:bool) -> void:
+	var FVectorX :int = 0
+	var FVectorZ :int = 0
+	var RotationCalculated:int = 0
+	var RoundedRotation:int = 0
 # warning-ignore:narrowing_conversion
 	RoundedRotation = round(rotation_degrees.y)
 	rotate_y(deg2rad(int((Rotate * 3))))
 
 	if ColidedY == true:
-		if L == true and F == true:
+		if Slide == false:
+			if L == true and F == true:
+					RoundedRotation += 45
+					if RoundedRotation >= 180:
+						var X = RoundedRotation + -180
+						RoundedRotation = (180 - X) * -1
+				
+			if L == true and F == false and B == false:
+					RoundedRotation += 90
+					if RoundedRotation >= 180:
+						var X = RoundedRotation + -180
+						RoundedRotation = (180 - X) * -1
+
+			if L == true and B == true:
+					RoundedRotation += -45
+					if RoundedRotation <= -180:
+						var X = RoundedRotation + 180
+						RoundedRotation = (180 + X)
+
+			if R == true and F == true:
+					RoundedRotation += -45
+					if RoundedRotation <= -180:
+						var X = RoundedRotation + 180
+						RoundedRotation = (180 + X)
+
+			if R == true and F == false and B == false:
+					RoundedRotation += -90
+					if RoundedRotation <= -180:
+						var X = RoundedRotation + 180
+						RoundedRotation = (180 + X)
+
+			if R == true and B == true:
 				RoundedRotation += 45
 				if RoundedRotation >= 180:
 					var X = RoundedRotation + -180
 					RoundedRotation = (180 - X) * -1
+
+
+
+			if RoundedRotation <= 90 and RoundedRotation >= 0:
+				FVectorZ = -RoundedRotation
+				FVectorX = 90 - RoundedRotation
+
+			if RoundedRotation > 90:
+				RoundedRotation = RoundedRotation
+				RotationCalculated = RoundedRotation - 90 
+				FVectorX = -RotationCalculated
+				FVectorZ = 90 - RotationCalculated
+				FVectorZ = -FVectorZ
 			
-		if L == true and F == false and B == false:
-				RoundedRotation += 90
-				if RoundedRotation >= 180:
-					var X = RoundedRotation + -180
-					RoundedRotation = (180 - X) * -1
+			if RoundedRotation < 0 and RoundedRotation > -90:
+				RotationCalculated = RoundedRotation * -1
+				FVectorZ = RotationCalculated
+				FVectorX = 90 - RotationCalculated
 
-		if L == true and B == true:
-				RoundedRotation += -45
-				if RoundedRotation <= -180:
-					var X = RoundedRotation + 180
-					RoundedRotation = (180 + X)
-
-		if R == true and F == true:
-				RoundedRotation += -45
-				if RoundedRotation <= -180:
-					var X = RoundedRotation + 180
-					RoundedRotation = (180 + X)
-
-		if R == true and F == false and B == false:
-				RoundedRotation += -90
-				if RoundedRotation <= -180:
-					var X = RoundedRotation + 180
-					RoundedRotation = (180 + X)
-
-		if R == true and B == true:
-			RoundedRotation += 45
-			if RoundedRotation >= 180:
-				var X = RoundedRotation + -180
-				RoundedRotation = (180 - X) * -1
+			if RoundedRotation <=-90:
+				RotationCalculated = RoundedRotation + 90
+				FVectorZ = 90 + RotationCalculated
+				FVectorX = RotationCalculated * -1
+				FVectorX = -FVectorX
 
 
-
-		if RoundedRotation <= 90 and RoundedRotation >= 0:
-			FVectorZ = -RoundedRotation
-			FVectorX = 90 - RoundedRotation
-
-		if RoundedRotation > 90:
-			RoundedRotation = RoundedRotation
-			RotationCalculated = RoundedRotation - 90 
-			FVectorX = -RotationCalculated
-			FVectorZ = 90 - RotationCalculated
-			FVectorZ = -FVectorZ
+			FVector.x = -FVectorZ
+			FVector.z = FVectorX
 		
-		if RoundedRotation < 0 and RoundedRotation > -90:
-			RotationCalculated = RoundedRotation * -1
-			FVectorZ = RotationCalculated
-			FVectorX = 90 - RotationCalculated
 
-		if RoundedRotation <=-90:
-			RotationCalculated = RoundedRotation + 90
-			FVectorZ = 90 + RotationCalculated
-			FVectorX = RotationCalculated * -1
-			FVectorX = -FVectorX
+			if F == true or L == true or R == true:
+				if B == false:
+					FVector.x = stepify(FVector.x, 10)
+					FVector.z = stepify(FVector.z, 10)
+					CurrentSpeed += Acceleration
+					if CurrentSpeed >= 5:
+						CurrentSpeed = 5
 
-
-		FVector.x = -FVectorZ
-		FVector.z = FVectorX
-	
-
-		if F == true or L == true or R == true:
-			if B == false:
+			if B == true:
+				FVector.x = stepify(-FVector.x, 10)
+				FVector.z = stepify(-FVector.z, 10)
+				CurrentSpeed = 3
+			
+			if F == false and B == false and R == false and L == false:
 				FVector.x = stepify(FVector.x, 10)
 				FVector.z = stepify(FVector.z, 10)
-				CurrentSpeed += Acceleration
-				if CurrentSpeed >= 10:
-					CurrentSpeed = 10
-
-		if B == true:
-			FVector.x = stepify(-FVector.x, 10)
-			FVector.z = stepify(-FVector.z, 10)
-			CurrentSpeed = 3
-		
-		if F == false and B == false and R == false and L == false:
+				CurrentSpeed -= Deceleration
+				if CurrentSpeed <= 0:
+					CurrentSpeed = 0
+					FVector.x = 0
+					FVector.z = 0
+		else:
 			FVector.x = stepify(FVector.x, 10)
 			FVector.z = stepify(FVector.z, 10)
-			CurrentSpeed -= Deceleration
+			CurrentSpeed -= SlideFrction
 			if CurrentSpeed <= 0:
 				CurrentSpeed = 0
-			FVector.x = 0
-			FVector.z = 0
+				FVector.x = 0
+				FVector.z = 0
 	else:
 		if B == true:
 			CurrentSpeed -= 1
@@ -359,6 +378,7 @@ func MakeMovement() -> void:
 		global_translation.x += (FVector.x / 10) * CurrentSpeed
 		global_translation.y += FVector.y
 		global_translation.z += (FVector.z / 10) * CurrentSpeed
+		print((FVector / 10) * CurrentSpeed)
 
 
 func CalculateVelocity() -> void:
@@ -368,6 +388,7 @@ func CalculateVelocity() -> void:
 	else:
 		LastPosition = global_translation
 		VeloctiyCounter += 1
+	print(global_translation)
 
 
 func OneShotRayCast() -> void:
@@ -457,3 +478,25 @@ func WallRun() -> void:
 					if RoundedRotationWR >= -140 and RoundedRotationWR < 0:
 						FVector = Vector3(-90,0,-20)
 						WallRuning = true
+
+
+func Slide(Pressed):
+	if Pressed:
+		if ColidedY == true:
+			SlideTimer -= 1
+			if SlideTimer <= 0:
+				SlideTimer = 0
+
+			if SlideTimer >= 50 and CurrentSpeed >= 4:
+				CurrentSpeed = 7
+				SlideFrction = 0
+			else:
+				SlideFrction = 1
+		else:
+			CurrentSpeed = 5
+	else:
+		if ColidedY == true:
+			SlideTimer += 1
+			SlideFrction = 1
+			if SlideTimer >= 100:
+				SlideTimer = 100

@@ -32,7 +32,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="PhysicEngine"
+config/name="PhysicEngine9.0Stable"
 run/main_scene="res://Maps/MainMenu/MainMenu.tscn"
 config/icon="res://icon.png"
 
@@ -107,10 +107,17 @@ Run={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777237,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
+Slide={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777238,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
 
 [network]
 
 rollback/interpolation=true
+rollback/debug/rollback_ticks=5
+rollback/debug/random_rollback_ticks=2
 
 [physics]
 
