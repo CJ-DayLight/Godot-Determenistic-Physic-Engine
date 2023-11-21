@@ -24,7 +24,7 @@ func OnSomeOneJoined(peer_id: int):
 		get_node("/root/L_Main/ClientPlayer").set_network_master(peer_id)
 	else:
 		get_node("/root/L_Main/ClientPlayer").set_network_master(get_tree().get_network_unique_id())
-	
+
 	if get_tree().is_network_server():
 		# Give a little time to get ping data.
 		yield(get_tree().create_timer(2.0), "timeout")

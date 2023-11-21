@@ -13,16 +13,6 @@ export var fast_close := true
 func _ready() -> void:
 	for Child in $Walls.get_children():
 		Child.global_translation *= 10
-		
-	
-	if !OS.is_debug_build():
-		fast_close = false
-	
-	if fast_close:
-		print("** Fast Close enabled in the 'L_Main.gd' script **")
-		print("** 'Esc' to close 'Shift + F1' to release mouse **")
-	
-	set_process_input(fast_close)
 
 
 func _input(event: InputEvent) -> void:

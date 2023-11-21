@@ -1,7 +1,7 @@
 tool
 extends Spatial
 
-var PlayerBaseVelocityExport:int = 20
+export var PlayerBaseVelocityExport:int = 10
 var PlayerBaseVelocity:int = 0
 export var EXHeight :int = 2
 export var EXDepth :int = 2
@@ -38,10 +38,8 @@ var ParalelScaleLocal = 1
 
 
 func _ready():
-	ParalelScaleLocal = 10
+	ParalelScaleLocal = 1
 	PlayerBaseVelocity = (PlayerBaseVelocityExport * ParalelScaleLocal)
-
-	yield(get_tree().create_timer(0.5), "timeout")
 	Depth = (EXDepth * ParalelScaleLocal)
 	Height = (EXHeight * ParalelScaleLocal)
 	Width = (EXWidth * ParalelScaleLocal)
@@ -97,9 +95,9 @@ func _ready():
 
 func ChekingArea():
 	CZ1 = global_translation
-	CZ2 = global_translation + ((Vector3(Width,0,0) + Vector3(PlayerBaseVelocity,0,0)))
-	CZ3 = global_translation + ((Vector3(0,0,Depth) + Vector3(0,0,PlayerBaseVelocity)))
-	CZ4 = global_translation + ((Vector3(Width,0,Depth) + Vector3(PlayerBaseVelocity,0,PlayerBaseVelocity)))
+	CZ2 = global_translation + (Vector3(Width,0,0) + Vector3(PlayerBaseVelocity,0,0))
+	CZ3 = global_translation + (Vector3(0,0,Depth) + Vector3(0,0,PlayerBaseVelocity))
+	CZ4 = global_translation + (Vector3(Width,0,Depth) + Vector3(PlayerBaseVelocity,0,PlayerBaseVelocity))
 	
 	CZ1.x = CZ1.x + -PlayerBaseVelocity / 2
 	CZ1.z = CZ1.z + -PlayerBaseVelocity / 2
@@ -120,7 +118,11 @@ func ChekingArea():
 	$CheckingZone/CZ4.global_translation = CZ4
 
 
-
+func CheckWorthToProjectileCalculation(NFP) -> bool: # NFP stands for Next Frame Position
+	if NFP.x >= CZ3.x and NFP.x <= CZ4.x and NFP.z >= CZ2.z and NFP.z <= CZ4.z:
+		return true
+	else:
+		return false
 
 
 

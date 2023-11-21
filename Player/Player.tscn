@@ -1,24 +1,61 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Player/PlayerRollBack.gd" type="Script" id=1]
+[ext_resource path="res://Player/FakeMesh.gd" type="Script" id=2]
+[ext_resource path="res://Physic/PlayerHitBoxes/PlayerHitBox.tscn" type="PackedScene" id=3]
 
 [sub_resource type="CapsuleMesh" id=1]
 
-[sub_resource type="CubeMesh" id=2]
-
-[node name="Player" type="Spatial" groups=["network_sync"]]
+[node name="Player" type="Spatial" groups=["Player", "network_sync"]]
+transform = Transform( 9, 0, 0, 0, 9, 0, 0, 0, 9, 0, 0, 0 )
+visible = false
 script = ExtResource( 1 )
 
-[node name="PlayerMesh" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1.4903, 0 )
-mesh = SubResource( 1 )
+[node name="Aim" type="ColorRect" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -1.0
+margin_top = -1.0
+margin_right = 1.0
+margin_bottom = 1.0
 
-[node name="PlayerMesh2" type="MeshInstance" parent="."]
-transform = Transform( 0.1, 0, 0, 0, -4.37114e-08, 0.1, 0, -1, -4.37114e-09, 0, 1.4903, 1.50349 )
-mesh = SubResource( 2 )
+[node name="Node" type="Node" parent="."]
+
+[node name="HitBox" parent="Node" instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -9 )
+visible = false
+PlayerBaseVelocityExport = 20
+EXHeight = 27
+EXDepth = 20
+EXWidth = 20
+
+[node name="CSGPolygon" parent="Node/HitBox" index="4"]
+visible = false
+polygon = PoolVector2Array( 0, 0, 20, 0, 20, 27, 0, 27 )
+
+[node name="CZ1" parent="Node/HitBox/CheckingZone" index="0"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10 )
+
+[node name="CZ2" parent="Node/HitBox/CheckingZone" index="1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, -10 )
+
+[node name="CZ3" parent="Node/HitBox/CheckingZone" index="2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 30 )
+
+[node name="CZ4" parent="Node/HitBox/CheckingZone" index="3"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 30 )
+
+[node name="PlayerMesh" type="MeshInstance" parent="Node"]
+transform = Transform( 9, 0, 0, 0, -3.93403e-07, 9, 0, -9, -3.93403e-07, 0, 13.5, 0 )
+visible = false
+mesh = SubResource( 1 )
+skeleton = NodePath("../..")
+script = ExtResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( -1, 2.62583e-21, -8.74228e-08, 1.69407e-21, 1, 1.06581e-14, 8.74228e-08, 1.06581e-14, -1, 0, 2.41481, 0.123448 )
+transform = Transform( -0.111111, 0, -9.71364e-09, 0, 0.111111, 0, 9.71364e-09, 0, -0.111111, 0, 2, 1 )
 far = 8192.0
 
-[node name="Spatial" type="Spatial" parent="."]
+[editable path="Node/HitBox"]

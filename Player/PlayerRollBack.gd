@@ -1,12 +1,28 @@
 extends "res://Player/DetermenisticLib.gd"
 
+
+
+var WallData:Array = []
+var WallDataCD:Array = []
+var WallDataN:Array = []
+var CDWallsNumber = 0
+var ActiveWalls = 0
+var IndexHelper = 0
+var ActiveWallArray: Array = []
+var CountedWallsCheck = 0
+
+
 #ForwardVector
 var FVector:Vector3 = Vector3()
+var FVectorX:int = 0
+var FVectorZ:int = 0
 #ForwardVector
 
 #Mouse
 var RY:int= 0
-var MouseSensivity:float = 0.3
+var RX:int=0
+var MouseSensivity:float = 0.5
+var AimResult:Vector3 = Vector3(0,0,0)
 #Mouse
 
 #Physic
@@ -17,7 +33,7 @@ var WallCount:int = 0
 var CountedWalls:int = 0
 var CountedWallsY:int = 0
 var CalculatedMovement:Vector3 = Vector3(0,0,0)
-var OnWall = false
+var OnWall:bool = false
 #Physic
 
 #Accel
@@ -51,23 +67,74 @@ var WallRuning:bool = false
 
 var SlideTimer:int = 10
 
+const Bullet = preload("res://Wappons/BasicPistol/Projectile/Mesh/RubberBullet.tscn")
 
 #Offline Thinks
+
+
+func CalculateVelocity() -> void:
+	if VeloctiyCounter == 1:
+		Velocity = global_translation - LastPosition
+		VeloctiyCounter = 0
+	else:
+		LastPosition = global_translation
+		VeloctiyCounter += 1
+
+
+
+func _physics_process(delta):
+#	CalculateVelocity()
+	RY = int(0)
+	RX = int(0)
+	if is_network_master():
+		CalculateAimVector()
+
+
 func _input(event):
 	if is_network_master():
 		if event is InputEventMouseMotion:
 			RY = int(-event.relative.x * MouseSensivity)
-
+			RX = int(event.relative.y * (MouseSensivity + 0.2))
 
 
 func _ready():
-	CountWalls()
+#	var TestBullet = Bullet.instance()
+#	add_child(TestBullet)
+	yield(get_tree().create_timer(1), "timeout")
+	StoreWallData()
 
-func CountWalls():
+
+func StoreWallData():
 	global_translation *= 10
 	scale *= 10
 	for W in get_tree().get_nodes_in_group("StaticCollsions"):
 		WallCount += 1
+		WallData.append(W.PWV1)
+		WallData.append(W.PWV2)
+		WallData.append(W.PWV3)
+		WallData.append(W.PWV4)
+		WallData.append(W.PWHV)
+
+	for W in get_tree().get_nodes_in_group("StaticCollsions"):
+		WallDataCD.append(W.CZ2)
+		WallDataCD.append(W.CZ3)
+		WallDataCD.append(W.CZ4)
+
+
+func CalculateAimVector():
+	var AimVector = (-$Camera.global_transform.basis.z * 10)
+	var TotalVector = abs(AimVector.x) + abs(AimVector.y) + abs(AimVector.z)
+	var FormulaValue = (TotalVector / 100)
+	var CalculatedAimX = (AimVector.x / FormulaValue)
+	var CalculatedAimY = (AimVector.y / FormulaValue)
+	var CalculatedAimZ = (AimVector.z / FormulaValue)
+	CalculatedAimX = stepify(CalculatedAimX,1)
+	CalculatedAimY = stepify(CalculatedAimY,1)
+	CalculatedAimZ = stepify(CalculatedAimZ,1)
+	AimResult = Vector3(CalculatedAimX,CalculatedAimY,CalculatedAimZ)
+
+
+
 
 
 # Rollback
@@ -80,25 +147,32 @@ func _get_local_input() -> Dictionary:
 		input["L"] = Input.is_action_pressed("ui_left")
 		input["R"] = Input.is_action_pressed("ui_right")
 	input["RY"] = RY
+	input["RX"] = RX
+	input["AimResult"] = AimResult
 	if Input.is_action_just_pressed("Jump"):
 		input["Jump"] = int(1)
 	if Input.is_action_just_pressed("TurnAroundLeft"):
 		input["TurnAroundLeft"] = true
 	if Input.is_action_pressed("Slide"):
 		input["Slide"] = true
+	if Input.is_action_just_pressed("Shoot"):
+		input["Shoot"] = true
+	
+	
 	return input
 
 func _network_process(input: Dictionary) -> void:
-	CalculateForwardVector(input.get("RY",0),input.get("F",false),input.get("B",false),input.get("L",false),input.get("R",false),input.get("Slide",false))
-	RayCasting((global_translation * 10),0)
+	CalculateForwardVector(input.get("RY",0),input.get("RX",0),input.get("F",false),input.get("B",false),input.get("L",false),input.get("R",false),input.get("Slide",false))
+	CalculateWorthToRayCast()
+	RayCasting((global_translation * 10) + Vector3(-FVector.x,0,-FVector.z),0)
 	RayCastY((global_translation * 10) + Vector3(-FVector.x,0,-FVector.z),0)
+	Shoot(input.get("AimResult",Vector3.ZERO),input.get("Shoot",false))
 	Slide(input.get("Slide",false))
 	WallRun()
 	Jump(input.get("Jump",0))
 	TrunMovement(input.get("TurnAroundLeft",false))
-	OneShotRayCast()
+#	OneShotRayCast()
 	MakeMovement()
-	CalculateVelocity()
 
 func _save_state() -> Dictionary:
 	return {
@@ -132,14 +206,14 @@ func _load_state(state: Dictionary) -> void:
 
 
 
-func CalculateForwardVector(Rotate,F:bool,B:bool,L:bool,R:bool,Slide:bool) -> void:
-	var FVectorX :int = 0
-	var FVectorZ :int = 0
+func CalculateForwardVector(Rotate,RX,F:bool,B:bool,L:bool,R:bool,Slide:bool) -> void:
 	var RotationCalculated:int = 0
 	var RoundedRotation:int = 0
 # warning-ignore:narrowing_conversion
 	RoundedRotation = round(rotation_degrees.y)
-	rotate_y(deg2rad(int((Rotate * 3))))
+	rotate_y(deg2rad(int((Rotate * 2))))
+	rotation_degrees.x += RX
+	rotation_degrees.x = Clamp(rotation_degrees.x,-90,90)
 
 	if ColidedY == true:
 		if Slide == false:
@@ -214,7 +288,7 @@ func CalculateForwardVector(Rotate,F:bool,B:bool,L:bool,R:bool,Slide:bool) -> vo
 					FVector.z = stepify(FVector.z, 10)
 					CurrentSpeed += Acceleration
 					if CurrentSpeed >= 5:
-						CurrentSpeed = 5
+						CurrentSpeed = 1
 
 			if B == true:
 				FVector.x = stepify(-FVector.x, 10)
@@ -253,18 +327,24 @@ func CalculateForwardVector(Rotate,F:bool,B:bool,L:bool,R:bool,Slide:bool) -> vo
 		print("Not Possibile Speed")
 
 
-func RayCasting(RayStep:Vector3,StepSize:int) -> void:
-	CountedWalls = 0
+func RayCasting(RayStep:Vector3,StepSize:int) -> void: #Dynamic
 	Colided = false
+	CountedWalls = 0
 	RayStep = RayStep + FVector
-	var RoundedStep = Vector3(stepify((RayStep.x),100), stepify((RayStep.y),100), stepify((RayStep.z),100))
-	if not StepSize > 10:
-		for W in get_tree().get_nodes_in_group("StaticCollsions"):
-			CountedWalls += 1
-			var Wall = get_node(str("../Walls/Wall") + str(CountedWalls))
-			if (RoundedStep.x + 1000) >= Wall.PWV1.x and (RoundedStep.x - 1000) <= Wall.PWV2.x:
-				if (RoundedStep.z + 1000) == Wall.PWV1.z:
-					if RoundedStep.y < Wall.PWHV.y and (RoundedStep.y + 2700) > Wall.PWV1.y:
+	for ActiveNumbers in ActiveWallArray:
+		var IndexHelperPW = (ActiveNumbers * 5)
+		var PWV1 = WallData[0 + IndexHelperPW]
+		var PWV2 = WallData[1 + IndexHelperPW]
+		var PWV3 = WallData[2 + IndexHelperPW]
+		var PWV4 = WallData[3 + IndexHelperPW]
+		var PWHV = WallData[4 + IndexHelperPW]
+		CountedWalls += 1
+		var RoundedStep = Vector3(stepify((RayStep.x),100), stepify((RayStep.y),100), stepify((RayStep.z),100))
+		if not StepSize > 5:
+			if (RoundedStep.x + 1000) >= PWV1.x and (RoundedStep.x - 1000) <= PWV2.x and (RoundedStep.z + 1000) >= PWV1.z and (RoundedStep.z - 1000) <= PWV3.z:
+				if (RoundedStep.x + 1000) >= PWV1.x and (RoundedStep.x - 1000) <= PWV2.x:
+					if (RoundedStep.z + 1000) == PWV1.z\
+					and RoundedStep.y < PWHV.y and (RoundedStep.y + 2700) > PWV1.y:
 						CalculatedMovement = (RoundedStep / 10)
 						CalculatedMovement.z = CalculatedMovement.z - 20
 						WallNormal = Vector3(0,0,-1)
@@ -275,8 +355,8 @@ func RayCasting(RayStep:Vector3,StepSize:int) -> void:
 						return
 
 
-				if (RoundedStep.z -1000) == Wall.PWV4.z:
-					if RoundedStep.y < Wall.PWHV.y and (RoundedStep.y + 2700) > Wall.PWV1.y:
+					if (RoundedStep.z -1000) == PWV4.z\
+					and RoundedStep.y < PWHV.y and (RoundedStep.y + 2700) > PWV1.y:
 						CalculatedMovement = (RoundedStep / 10)
 						CalculatedMovement.z = CalculatedMovement.z + 20
 						WallNormal = Vector3(0,0,1)
@@ -287,9 +367,9 @@ func RayCasting(RayStep:Vector3,StepSize:int) -> void:
 						return
 
 
-			if (RoundedStep.z + 1000) >= Wall.PWV1.z and (RoundedStep.z - 1000) <= Wall.PWV3.z:
-				if (RoundedStep.x + 1000) == Wall.PWV3.x:
-					if RoundedStep.y < Wall.PWHV.y and (RoundedStep.y + 2700) > Wall.PWV1.y:
+				if (RoundedStep.z + 1000) >= PWV1.z and (RoundedStep.z - 1000) <= PWV3.z:
+					if (RoundedStep.x + 1000) == PWV3.x\
+					and RoundedStep.y < PWHV.y and (RoundedStep.y + 2700) > PWV1.y:
 						CalculatedMovement = (RoundedStep / 10)
 						CalculatedMovement.x = CalculatedMovement.x - 20
 						WallNormal = Vector3(-1,0,0)
@@ -300,8 +380,8 @@ func RayCasting(RayStep:Vector3,StepSize:int) -> void:
 						return
 
 
-				if (RoundedStep.x - 1000) == Wall.PWV4.x:
-					if RoundedStep.y < Wall.PWHV.y and (RoundedStep.y + 2700) > Wall.PWV1.y:
+					if (RoundedStep.x - 1000) == PWV4.x\
+					and RoundedStep.y < PWHV.y and (RoundedStep.y + 2700) > PWV1.y:
 						CalculatedMovement = (RoundedStep / 10)
 						CalculatedMovement.x = CalculatedMovement.x + 20
 						WallNormal = Vector3(1,0,0)
@@ -310,9 +390,8 @@ func RayCasting(RayStep:Vector3,StepSize:int) -> void:
 						CountedWalls = 0
 						break 
 						return
-
-
-			if CountedWalls == WallCount:
+						
+			if CountedWalls == CountedWallsCheck:
 				if Colided == false:
 					OnWall = false
 					CountedWalls = 0
@@ -321,29 +400,35 @@ func RayCasting(RayStep:Vector3,StepSize:int) -> void:
 
 
 func RayCastY(RayStep:Vector3,StepSize:int) -> void:
-	CountedWallsY = 0
 	ColidedY = false
+	CountedWallsY = 0
 	RayStep = RayStep + FVector
-	var RoundedStep = Vector3(stepify((RayStep.x),100), stepify((RayStep.y),100), stepify((RayStep.z),100))
-	if not StepSize > 10:
-		for W in get_tree().get_nodes_in_group("StaticCollsions"):
-			CountedWallsY += 1
-			var Wall = get_node(str("../Walls/Wall") + str(CountedWallsY))
+	for ActiveNumbers in ActiveWallArray:
+		var IndexHelperPW = (ActiveNumbers * 5)
+		var PWV1 = WallData[0 + IndexHelperPW]
+		var PWV2 = WallData[1 + IndexHelperPW]
+		var PWV3 = WallData[2 + IndexHelperPW]
+		var PWV4 = WallData[3 + IndexHelperPW]
+		var PWHV = WallData[4 + IndexHelperPW]
+		var RoundedStep = Vector3(stepify((RayStep.x),100), stepify((RayStep.y),100), stepify((RayStep.z),100))
+		CountedWallsY += 1
+		if not StepSize > 5:
+			if (RoundedStep.y + 2700) == PWV1.y or RoundedStep.y == PWHV.y:
 			# Clasical RayCast for finding Floor
-			if (RoundedStep.x + 900) > Wall.PWV1.x and (RoundedStep.x - 900) < Wall.PWV2.x:
-				if (RoundedStep.z + 900) > Wall.PWV1.z and (RoundedStep.z - 900)< Wall.PWV3.z:
-					if (RoundedStep.y + 2700) == Wall.PWV1.y:
-						FVector.y = 5
-						WallNormal = Vector3(0,1,0)
+				if (RoundedStep.x + 900) > PWV1.x and (RoundedStep.x - 900) < PWV2.x:
+					if (RoundedStep.z + 900) > PWV1.z and (RoundedStep.z - 900)< PWV3.z:
+						if (RoundedStep.y + 2700) == PWV1.y:
+							FVector.y = 5
+							WallNormal = Vector3(0,1,0)
 
 
-					# Clasical RayCast for finding Celling
-					if RoundedStep.y == Wall.PWHV.y:
-						global_translation.y = ((Wall.PWHV.y / 10))
-						ColidedY = true
-						WallNormal = Vector3(0,-1,0)
+							# Clasical RayCast for finding Celling
+						if RoundedStep.y == PWHV.y:
+							global_translation.y = ((PWHV.y / 10))
+							ColidedY = true
+							WallNormal = Vector3(0,-1,0)
 
-			if CountedWallsY == WallCount:
+			if CountedWallsY == CountedWallsCheck:
 				if ColidedY == false:
 					CountedWallsY = 0
 					StepSize += 1
@@ -378,17 +463,6 @@ func MakeMovement() -> void:
 		global_translation.x += (FVector.x / 10) * CurrentSpeed
 		global_translation.y += FVector.y
 		global_translation.z += (FVector.z / 10) * CurrentSpeed
-		print((FVector / 10) * CurrentSpeed)
-
-
-func CalculateVelocity() -> void:
-	if VeloctiyCounter == 1:
-		Velocity = global_translation - LastPosition
-		VeloctiyCounter = 0
-	else:
-		LastPosition = global_translation
-		VeloctiyCounter += 1
-	print(global_translation)
 
 
 func OneShotRayCast() -> void:
@@ -480,7 +554,7 @@ func WallRun() -> void:
 						WallRuning = true
 
 
-func Slide(Pressed):
+func Slide(Pressed) -> void:
 	if Pressed:
 		if ColidedY == true:
 			SlideTimer -= 1
@@ -500,3 +574,28 @@ func Slide(Pressed):
 			SlideFrction = 1
 			if SlideTimer >= 100:
 				SlideTimer = 100
+
+
+func Shoot(AimResult,input) -> void:
+	if input == true:
+		var SpwanPosition = $Camera.global_translation
+		SyncManager.spawn("RubberBullet",get_parent(),Bullet,{GlobalTranslation = SpwanPosition,FVector = AimResult})
+
+
+func CalculateWorthToRayCast() -> void:
+	ActiveWallArray.clear()
+	CountedWallsCheck = 0
+	IndexHelper = 0
+	for WallNumber in WallCount:
+		var NFP = global_translation + FVector
+		var CZ2 = WallDataCD[0 + IndexHelper]
+		var CZ3 = WallDataCD[1 + IndexHelper]
+		var CZ4 = WallDataCD[2 + IndexHelper]
+		if NFP.x >= CZ3.x and NFP.x <= CZ4.x and NFP.z >= CZ2.z and NFP.z <= CZ4.z:
+			ActiveWallArray.append(WallNumber)
+			CountedWallsCheck += 1
+		IndexHelper += 3
+
+
+
+

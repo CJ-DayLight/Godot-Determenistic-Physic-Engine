@@ -18,8 +18,8 @@ func _ready():
 	CountWalls()
 
 func CountWalls():
+	yield(get_tree().create_timer(1),"timeout")
 	for Wall in get_tree().get_nodes_in_group("StaticCollsions"):
-		yield(get_tree().create_timer(1),"timeout")
 		print(Wall.name)
 		WallCount += 1
 		
