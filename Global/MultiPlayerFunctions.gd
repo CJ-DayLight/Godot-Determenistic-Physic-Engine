@@ -21,9 +21,9 @@ func OnSomeOneJoined(peer_id: int):
 	SyncManager.add_peer(peer_id)
 	get_node("/root/L_Main/ServerPlayer").set_network_master(1)
 	if get_tree().is_network_server():
-		get_node("/root/L_Main/ClientPlayer").set_network_master(peer_id)
+		get_node("/root/L_Main/ServerPlayer2").set_network_master(peer_id)
 	else:
-		get_node("/root/L_Main/ClientPlayer").set_network_master(get_tree().get_network_unique_id())
+		get_node("/root/L_Main/ServerPlayer2").set_network_master(get_tree().get_network_unique_id())
 
 	if get_tree().is_network_server():
 		# Give a little time to get ping data.
@@ -41,6 +41,19 @@ func HostGame() -> void:
 	var peer = NetworkedMultiplayerENet.new()
 	peer.create_server(int(9999), 1)
 	get_tree().network_peer = peer
+#	yield(get_tree().create_timer(2.0), "timeout")
+#	get_node("/root/L_Main/ServerPlayer").set_network_master(1)
+#	get_node("/root/L_Main/ServerPlayer2").set_network_master(2)
+#	get_node("/root/L_Main/ServerPlayer3").set_network_master(3)
+#	get_node("/root/L_Main/ServerPlayer4").set_network_master(4)
+#	get_node("/root/L_Main/ServerPlayer5").set_network_master(5)
+#	get_node("/root/L_Main/ServerPlayer6").set_network_master(6)
+#	yield(get_tree().create_timer(2.0), "timeout")
+#	SyncManager.start()
+	
+	yield(get_tree().create_timer(2.0), "timeout")
+	for Wall in get_tree().get_nodes_in_group("StaticCollsions"):
+		Wall.set_script(null)
 
 func JoinGame() -> void:
 	var peer = NetworkedMultiplayerENet.new()

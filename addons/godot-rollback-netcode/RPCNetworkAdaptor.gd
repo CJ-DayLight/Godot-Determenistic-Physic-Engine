@@ -25,7 +25,6 @@ func send_remote_stop(peer_id: int) -> void:
 
 remote func _remote_stop() -> void:
 	emit_signal("received_remote_stop")
-
 func send_input_tick(peer_id: int, msg: PoolByteArray) -> void:
 	rpc_unreliable_id(peer_id, '_rit', msg)
 
